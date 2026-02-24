@@ -1,0 +1,19 @@
+FROM public.ecr.aws/lambda/python:3.12
+
+# Copy requirements
+COPY requirements.txt .
+
+# Install dependencies
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy all code
+COPY etl/ ${LAMBDA_TASK_ROOT}/etl/
+COPY training/ ${LAMBDA_TASK_ROOT}/training/
+COPY inference/ ${LAMBDA_TASK_ROOT}/inference/
+COPY utils/ ${LAMBDA_TASK_ROOT}/utils/
+
+
+# Note: The CMD will be overridden by the Lambda configuration
+# to point to etl.lambda_handler.handler or inference.lambda_handler.handler
+CMD ["etl.lambda_handler.handler"]
